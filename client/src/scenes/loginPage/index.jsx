@@ -13,7 +13,7 @@ const LoginPage = () => {
         textAlign="center"
       >
         <Typography fontWeight="bold" fontSize="32px" color="primary">
-          Sociopedia
+          netFrnds
         </Typography>
       </Box>
 
@@ -25,7 +25,7 @@ const LoginPage = () => {
         backgroundColor={theme.palette.background.alt}
       >
         <Typography fontWeight="500" variant="h5" sx={{ mb: "1.5rem" }}>
-          Welcome to Socipedia, the Social Media for Sociopaths!
+          Welcome to netFrnd, the Social platform to become Frnds!
         </Typography>
         <Form />
       </Box>
