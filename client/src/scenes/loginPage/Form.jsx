@@ -112,6 +112,11 @@ const Form = () => {
     if (isRegister) await register(values, onSubmitProps);
   };
 
+  const alertFn = () =>{
+    console.log("Button clicked!");
+    alert("Loading!  Please Wait.......")
+  };
+
   return (
     <Formik
       onSubmit={handleFormSubmit}
@@ -254,6 +259,7 @@ const Form = () => {
             <Button
               fullWidth
               type="submit"
+              onClick={alertFn}
               sx={{
                 m: "2rem 0",
                 p: "1rem",
