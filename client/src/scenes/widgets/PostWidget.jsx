@@ -4,13 +4,15 @@ import {
   FavoriteOutlined,
   ShareOutlined,
 } from "@mui/icons-material";
-import { Box, Divider, IconButton, Typography, useTheme } from "@mui/material";
+import SendIcon from '@mui/icons-material/Send';
+import { Box, Divider, IconButton, Typography, useTheme, TextareaAutosize,Button} from "@mui/material";
 import FlexBetween from "components/FlexBetween";
 import Friend from "components/Friend";
 import WidgetWrapper from "components/WidgetWrapper";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setPost } from "state";
+import axios from "axios";
 
 const PostWidget = ({
   postId,
@@ -23,7 +25,6 @@ const PostWidget = ({
   likes,
   comments,
 }) => {
-  const [isComments, setIsComments] = useState(false);
   const dispatch = useDispatch();
   const token = useSelector((state) => state.token);
   const loggedInUserId = useSelector((state) => state.user._id);
@@ -35,7 +36,7 @@ const PostWidget = ({
   const primary = palette.primary.main;
 
   const patchLike = async () => {
-    const response = await fetch(`https://social-mernback-3.onrender.com/posts/${postId}/like`, {
+    const response = await fetch(`http://localhost:3001/posts/${postId}/like`, {
       method: "PATCH",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -45,6 +46,49 @@ const PostWidget = ({
     });
     const updatedPost = await response.json();
     dispatch(setPost({ post: updatedPost }));
+  };
+
+  const [isComments, setIsComments] = useState(false);
+  const [commentText, setCommentText] = useState('');
+  const [postComments, setPostComments] = useState(Array.isArray(comments) ? comments : []);
+
+  const handleCommentToggle = async () => {
+    setIsComments(!isComments);
+    if (!isComments) {
+      try {
+        const response = await fetch(`http://localhost:3001/posts/${postId}/comments`, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
+        const commentsData = await response.json();
+        setPostComments(Array.isArray(commentsData) ? commentsData : []);
+      } catch (error) {
+        console.error('Error fetching comments:', error);
+      }
+    }
+  };
+
+  const handleCommentSubmit = async () => {
+    try {
+      const response = await fetch(`http://localhost:3001/posts/${postId}/comment`, {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ userId: loggedInUserId, commentText }),
+      });
+      
+      const updatedPost = await response.json();
+      setPostComments(Array.isArray(updatedPost.comments) ? updatedPost.comments : []);
+      setCommentText('');
+      console.log('Comment submitted successfully!');
+    } catch (error) {
+      console.error('Error submitting comment:', error);
+    }
   };
 
   return (
@@ -64,7 +108,7 @@ const PostWidget = ({
           height="auto"
           alt="post"
           style={{ borderRadius: "0.75rem", marginTop: "0.75rem" }}
-          src={`https://social-mernback-3.onrender.com/assets/${picturePath}`}
+          src={`http://localhost:3001/assets/${picturePath}`}
         />
       )}
       <FlexBetween mt="0.25rem">
@@ -81,30 +125,86 @@ const PostWidget = ({
           </FlexBetween>
 
           <FlexBetween gap="0.3rem">
-            <IconButton onClick={() => setIsComments(!isComments)}>
+            <IconButton onClick={handleCommentToggle}>
               <ChatBubbleOutlineOutlined />
             </IconButton>
-            <Typography>{comments.length}</Typography>
+            <Typography>{postComments.length}</Typography>
           </FlexBetween>
         </FlexBetween>
 
-        <IconButton>
-          <ShareOutlined />
-        </IconButton>
+        <IconButton
+          onClick={() => {
+            navigator.clipboard.writeText(`http://localhost:3000/profile/${postUserId}`)
+              .then(() => {
+                alert('Link copied to clipboard');
+              })
+              .catch(err => {
+                console.error('Could not copy text: ', err);
+              });
+          }}
+        >
+        <ShareOutlined />
+      </IconButton>
+
+
       </FlexBetween>
+
+        {isComments && (
+              <div style={{display:"flex",paddingLeft:"10px"}}>
+                <TextareaAutosize
+                  minRows={1}
+                  placeholder="Enter your comment..."
+                  required
+                  value={commentText}
+                  onChange={(e) => setCommentText(e.target.value)}
+                  style={{
+                      width: '65%',
+                      padding: '10px',
+                      fontSize: '16px',
+                      borderRadius: '5px',
+                      border: '1px solid #ccc',
+                      boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+                      resize: 'none',
+                      outline: 'none',
+                    }}
+                />
+                <div style={{paddingLeft:'20px'}}>
+                <Button 
+                    variant="contained" 
+                    size="small" 
+                    endIcon={<SendIcon />}
+                    sx={{
+                        '&:hover': {
+                          backgroundColor: '#bcd7ff',
+                        },
+                      }}
+                      onClick={handleCommentSubmit} 
+                    >
+                  Send
+                </Button>
+                </div>
+              </div>
+            )}
+
+
+
       {isComments && (
         <Box mt="0.5rem">
-          {comments.map((comment, i) => (
-            <Box key={`${name}-${i}`}>
-              <Divider />
-              <Typography sx={{ color: main, m: "0.5rem 0", pl: "1rem" }}>
-                {comment}
-              </Typography>
-            </Box>
-          ))}
+          {postComments
+            .slice()
+            .reverse() // Reverse the order to show newest comment first
+            .map((comment, i) => (
+              <Box key={`${name}-${i}`}>
+                <Divider />
+                <Typography sx={{ color: main, m: "0.5rem 0", pl: "1rem" }}>
+                <strong>{comment.userName} : </strong>{comment.commentText}
+                </Typography>
+              </Box>
+            ))}
           <Divider />
         </Box>
       )}
+
     </WidgetWrapper>
   );
 };
