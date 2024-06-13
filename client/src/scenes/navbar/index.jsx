@@ -11,12 +11,8 @@ import {
   useMediaQuery,
 } from "@mui/material";
 import {
-  Search,
-  Message,
   DarkMode,
   LightMode,
-  Notifications,
-  Help,
   Menu,
   Close,
 } from "@mui/icons-material";
@@ -45,6 +41,7 @@ const Navbar = () => {
     <FlexBetween padding="1rem 6%" backgroundColor={alt}>
       <FlexBetween gap="1.75rem">
         <Typography
+          style={{paddingLeft:'20px'}}
           fontWeight="bold"
           fontSize="clamp(1rem, 2rem, 2.25rem)"
           color="primary"
@@ -56,36 +53,22 @@ const Navbar = () => {
             },
           }}
         >
-          NetFrnds
+          Sociopedia
         </Typography>
-        {isNonMobileScreens && (
-          <FlexBetween
-            backgroundColor={neutralLight}
-            borderRadius="9px"
-            gap="3rem"
-            padding="0.1rem 1.5rem"
-          >
-            <InputBase placeholder="Search..." />
-            <IconButton>
-              <Search />
-            </IconButton>
-          </FlexBetween>
-        )}
       </FlexBetween>
 
       {/* DESKTOP NAV */}
       {isNonMobileScreens ? (
-        <FlexBetween gap="2rem">
+        <FlexBetween gap="4rem">
           <IconButton onClick={() => dispatch(setMode())}>
             {theme.palette.mode === "dark" ? (
-              <DarkMode sx={{ fontSize: "25px" }} />
+              <DarkMode sx={{ fontSize: "30px" }} />
             ) : (
-              <LightMode sx={{ color: dark, fontSize: "25px" }} />
+              <LightMode sx={{ color: dark, fontSize: "30px" }} />
             )}
           </IconButton>
-          <Message sx={{ fontSize: "25px" }} />
-          <Notifications sx={{ fontSize: "25px" }} />
-          <Help sx={{ fontSize: "25px" }} />
+          
+  
           <FormControl variant="standard" value={fullName}>
             <Select
               value={fullName}
@@ -150,17 +133,14 @@ const Navbar = () => {
           >
             <IconButton
               onClick={() => dispatch(setMode())}
-              sx={{ fontSize: "25px" }}
+              sx={{ fontSize: "30px"}}
             >
               {theme.palette.mode === "dark" ? (
-                <DarkMode sx={{ fontSize: "25px" }} />
+                <DarkMode sx={{ fontSize: "30px" }} />
               ) : (
-                <LightMode sx={{ color: dark, fontSize: "25px" }} />
+                <LightMode sx={{ color: dark, fontSize: "30px" }} />
               )}
             </IconButton>
-            <Message sx={{ fontSize: "25px" }} />
-            <Notifications sx={{ fontSize: "25px" }} />
-            <Help sx={{ fontSize: "25px" }} />
             <FormControl variant="standard" value={fullName}>
               <Select
                 value={fullName}
