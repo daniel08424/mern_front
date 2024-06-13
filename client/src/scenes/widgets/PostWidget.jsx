@@ -134,7 +134,7 @@ const PostWidget = ({
 
         <IconButton
           onClick={() => {
-            navigator.clipboard.writeText(`https://social-mernback-3.onrender.com/profile/${postUserId}`)
+            navigator.clipboard.writeText(`https://mern-front-b93r.onrender.com/profile/${postUserId}`)
               .then(() => {
                 alert('Link copied to clipboard');
               })
