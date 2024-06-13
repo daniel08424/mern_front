@@ -23,6 +23,8 @@ const HomePage = () => {
       >
         <Box flexBasis={isNonMobileScreens ? "26%" : undefined}>
           <UserWidget userId={_id} picturePath={picturePath} />
+          <Box m="1rem 0" />
+          <FriendListWidget userId={_id} />
         </Box>
         <Box
           flexBasis={isNonMobileScreens ? "42%" : undefined}
@@ -33,9 +35,8 @@ const HomePage = () => {
         </Box>
         {isNonMobileScreens && (
           <Box flexBasis="26%">
-            
-            <FriendListWidget userId={_id} />
             <AdvertWidget />
+            <Box m="2rem 0" />
           </Box>
         )}
       </Box>
