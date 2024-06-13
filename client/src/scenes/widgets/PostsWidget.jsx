@@ -9,24 +9,26 @@ const PostsWidget = ({ userId, isProfile = false }) => {
   const token = useSelector((state) => state.token);
 
   const getPosts = async () => {
-    const response = await fetch("https://social-mernback-3.onrender.com/posts", {
+    const response = await fetch("http://localhost:3001/posts", {
       method: "GET",
       headers: { Authorization: `Bearer ${token}` },
     });
     const data = await response.json();
-    dispatch(setPosts({ posts: data }));
+    const sortedData = data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    dispatch(setPosts({ posts: sortedData }));
   };
 
   const getUserPosts = async () => {
     const response = await fetch(
-      `https://social-mernback-3.onrender.com/posts/${userId}/posts`,
+      `http://localhost:3001/posts/${userId}/posts`,
       {
         method: "GET",
         headers: { Authorization: `Bearer ${token}` },
       }
     );
     const data = await response.json();
-    dispatch(setPosts({ posts: data }));
+    const sortedData = data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    dispatch(setPosts({ posts: sortedData }));
   };
 
   useEffect(() => {
@@ -35,7 +37,8 @@ const PostsWidget = ({ userId, isProfile = false }) => {
     } else {
       getPosts();
     }
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, []);
+; // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <>
@@ -55,6 +58,7 @@ const PostsWidget = ({ userId, isProfile = false }) => {
           <PostWidget
             key={_id}
             postId={_id}
+            commentId={_id}
             postUserId={userId}
             name={`${firstName} ${lastName}`}
             description={description}
